@@ -1,0 +1,34 @@
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: KeyPair
+metadata:
+  name: deployment-ec2-key-pair
+spec:
+  forProvider:
+    publicKey: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDAOsmaYFqEqjNFly8kSSuAwfPCybrC4nHSvITAMykxvNX250gmZ/1lLVbNhr1dNA21td/kJ1R6ZqYzZv5AhQqnujmXFSRGB3xJFE8cqMZgT37iRT+fxUz37OaU/iI1gT1Ggsnnqde2ByI0FlaRMUgxIJGj0xwWOd8E61YW5bzn9YZn8x+dtMwvc3QsSudlpIFto/PgjV6rRf2H0WK9qiC4e2RLCXJJT+J0K9yWLwrxXjauiXbpE5sQi+MEI361F/Epl3RqWjLu5pPxTMMzKcJVVmpViRs+VsKdcepoj+Sc/kDo07y5PVR0CKt6AYu3xFRvbW7BE8GPxnaunf7C8g4F marek.sobolak@gmail.com"
+    region: us-east-1
+    tags:
+      ManagedBy: Crossplane
+  providerConfigRef:
+    name: default
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: Instance
+metadata:
+  name: deployment-ec2-instance
+spec:
+  forProvider:
+    region: us-east-1
+    ami: ami-0e449927258d45bc4
+    associatePublicIpAddress: true
+    availabilityZone: us-east-1a
+    instanceType: t2.nano
+    keyName: deployment-ec2-key-pair
+    monitoring: true
+    subnetIdRef:
+      name: deployment-public-us-east-1a
+    vpcSecurityGroupIdRefs:
+      - name: deployment-ec2-sg
+    tags:
+      ManagedBy: Crossplane
+  providerConfigRef:
+    name: default

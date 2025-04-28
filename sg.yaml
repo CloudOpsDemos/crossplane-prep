@@ -1,0 +1,49 @@
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: SecurityGroup
+metadata:
+  name: deployment-ec2-sg
+spec:
+  forProvider:
+    name: allow_http_https
+    region: us-east-1
+    vpcIdRef:
+      name: deployment-vpc
+    description: Allow http and https inbound traffic
+    tags:
+      ManagedBy: Crossplane
+  providerConfigRef:
+    name: default
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: SecurityGroupIngressRule
+metadata:
+  name: deployment-ec2-sg-ingress
+spec:
+  forProvider:
+    cidrIpv4: 0.0.0.0/0
+    fromPort: 80
+    toPort: 80
+    ipProtocol: tcp
+    region: us-east-1
+    securityGroupIdRef:
+      name: deployment-ec2-sg
+    tags:
+      ManagedBy: Crossplane
+  providerConfigRef:
+    name: default
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: SecurityGroupEgressRule
+metadata:
+  name: deployment-ec2-sg-egress
+spec:
+  forProvider:
+    cidrIpv4: 0.0.0.0/0
+    ipProtocol: "-1"
+    region: us-east-1
+    securityGroupIdRef:
+      name: deployment-ec2-sg
+    tags:
+      ManagedBy: Crossplane
+  providerConfigRef:
+    name: default
