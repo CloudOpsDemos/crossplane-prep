@@ -1,0 +1,129 @@
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: VPC
+metadata:
+  name: deployment-vpc
+  namespace: deployment
+spec:
+  forProvider:
+    region: us-east-1
+    cidrBlock: 10.0.0.0/16
+    enableDnsSupport: true
+    enableDnsHostnames: true
+    tags:
+      ManagedBy: Crossplane
+  providerConfigRef:
+    name: default
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: InternetGateway
+metadata:
+  name: deployment-igw
+  namespace: deployment
+spec:
+  forProvider:
+    region: us-east-1
+    vpcIdRef:
+      name: deployment-vpc
+    tags:
+      ManagedBy: Crossplane
+  providerConfigRef:
+    name: default
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: Subnet
+metadata:
+  name: deployment-public-us-east-1a
+  namespace: deployment
+  labels:
+    name: deployment-public-us-east-1a
+spec:
+  region: us-east-1
+  availabilityZone: us-east-1a
+  cidrBlock: 10.0.1.0/24
+  mapPublicIPOnLaunch: true
+  tags:
+    ManagedBy: Crossplane
+  vpcIdRef:
+    name: deployment-vpc
+  providerConfigRef:
+    name: default
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: Subnet
+metadata:
+  name: deployment-public-us-east-1b
+  namespace: deployment
+  labels:
+    name: deployment-public-us-east-1b
+spec:
+  region: us-east-1
+  availabilityZone: us-east-1b
+  cidrBlock: 10.0.2.0/24
+  mapPublicIPOnLaunch: true
+  tags:
+    ManagedBy: Crossplane
+  vpcIdRef:
+    name: deployment-vpc
+  providerConfigRef:
+    name: default
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: RouteTable
+metadata:
+  name: deployment-public
+  namespace: deployment
+spec:
+  forProvider:
+    region: us-east-1
+    tags:
+      Name: deployment-public
+    vpcIdRef:
+      name: deployment-vpc
+  providerConfigRef:
+    name: default
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: Route
+metadata:
+  name: deployment-public
+  namespace: deployment
+spec:
+  forProvider:
+    destinationCidrBlock: 0.0.0.0/0
+    gatewayIdRef:
+      name: deployment-igw
+    region: us-east-1
+    routeTableIdRef:
+      name: deployment-public
+  providerConfigRef:
+    name: default
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: RouteTableAssociation
+metadata:
+  name: deployment-public-us-east-1a
+  namespace: deployment
+spec:
+  forProvider:
+    region: us-east-1
+    routeTableIdRef:
+      name: deployment-public
+    subnetIdRef:
+      name: deployment-public-us-east-1a
+  providerConfigRef:
+    name: default
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: RouteTableAssociation
+metadata:
+  name: deployment-public-us-east-1b
+  namespace: deployment
+spec:
+  forProvider:
+    region: us-east-1
+    routeTableIdRef:
+      name: deployment-public
+    subnetIdRef:
+      name: deployment-public-us-east-1b
+  providerConfigRef:
+    name: default
