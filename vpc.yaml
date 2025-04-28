@@ -37,14 +37,15 @@ metadata:
   labels:
     name: deployment-public-us-east-1a
 spec:
-  region: us-east-1
-  availabilityZone: us-east-1a
-  cidrBlock: 10.0.1.0/24
-  mapPublicIPOnLaunch: true
-  tags:
-    ManagedBy: Crossplane
-  vpcIdRef:
-    name: deployment-vpc
+  forProvider:
+    region: us-east-1
+    availabilityZone: us-east-1a
+    cidrBlock: 10.0.1.0/24
+    mapPublicIpOnLaunch: true
+    tags:
+      ManagedBy: Crossplane
+    vpcIdRef:
+      name: deployment-vpc
   providerConfigRef:
     name: default
 ---
@@ -56,14 +57,15 @@ metadata:
   labels:
     name: deployment-public-us-east-1b
 spec:
-  region: us-east-1
-  availabilityZone: us-east-1b
-  cidrBlock: 10.0.2.0/24
-  mapPublicIPOnLaunch: true
-  tags:
-    ManagedBy: Crossplane
-  vpcIdRef:
-    name: deployment-vpc
+  forProvider:
+    region: us-east-1
+    availabilityZone: us-east-1b
+    cidrBlock: 10.0.2.0/24
+    mapPublicIpOnLaunch: true
+    tags:
+      ManagedBy: Crossplane
+    vpcIdRef:
+      name: deployment-vpc
   providerConfigRef:
     name: default
 ---
